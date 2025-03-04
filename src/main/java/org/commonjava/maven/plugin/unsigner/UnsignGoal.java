@@ -51,6 +51,9 @@ public class UnsignGoal extends AbstractMojo
    @Parameter(defaultValue = "", property = "unsigner.filter")
    private String[] excludes;
 
+   @Parameter(defaultValue = "false", property = "unsigner.fastUnsigner")
+   private boolean fastUnsigner;
+
    /**
     * {@inheritDoc}
     * 
@@ -69,7 +72,13 @@ public class UnsignGoal extends AbstractMojo
       for(String s : excludes)
          getLog().info("--- " + s);
 
-      final Unsigner unsigner = new Unsigner();
+      final Unsigner unsigner;
+      if (fastUnsigner) {
+         unsigner = new FastUnsigner();
+      } else {
+         unsigner = new StandardUnsigner();
+      }
+      getLog().info("Using " + unsigner.getClass().getName());
       int unsigned = 0;
 
       if (processAttachments)
